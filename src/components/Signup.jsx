@@ -1,8 +1,72 @@
 import React from "react";
-import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useState } from "react";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+import axios from "../axios";
+import { getToken } from "../hooks/getToken";
+import { useEffect } from "react";
 const Signup = () => {
 	const [passwordFlag, setPasswordFlag] = useState("password");
+	const [username, setUsername] = useState("");
+	const [password, setPassword] = useState("");
+	const [name, setName] = useState("");
+	const [email, setEmail] = useState("");
+
+	const navigate = useNavigate();
+
+	useEffect(() => {
+		const token = getToken();
+		if (token) {
+			navigate("/");
+		}
+	});
+
+	const register = async () => {
+		axios
+			.post("/user/register", {
+				username: username,
+				name: name,
+				email: email,
+				password: password,
+			})
+			.then((response) => {
+				if (response.data.token) {
+					toast.success("User registered successfully!", {
+						className: "f1 shadow-outline",
+					});
+					toast(`Welcome ${username}!`, {
+						position: "bottom-right",
+						icon: response.data.emoji,
+						className: "f1 shadow-outline",
+					});
+					window.localStorage.setItem("token", response.data.token);
+					window.localStorage.setItem("userID", response.data.userID);
+					setTimeout(() => {
+						navigate("/");
+						window.location.reload();
+					}, 1000);
+				} else {
+					console.log(response.data.message);
+					toast(response.data.message, {
+						position: "bottom-right",
+						icon: response.data.emoji,
+						className: "shadow-outline text-black f1",
+					});
+				}
+			})
+			.catch((err) => {
+				console.log(err);
+				toast.error("Error logging in user", {
+					position: "bottom-right",
+					className: "shadow-outline text-black f1",
+				});
+			});
+	};
+
+	const handleSubmit = (e) => {
+		e.preventDefault();
+	};
 	return (
 		<>
 			<div className="f1 flex min-h-full flex-1 flex-col justify-center px-6 py-9 lg:px-8">

@@ -1,9 +1,69 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useState } from "react";
-
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+import axios from "../axios";
+import { getToken } from "../hooks/getToken";
+import { useEffect } from "react";
 const Login = () => {
+	const navigate = useNavigate();
+
+	useEffect(() => {
+		const token = getToken();
+		if (token) {
+			navigate("/");
+		}
+	});
+
 	const [passwordFlag, setPasswordFlag] = useState("password");
+	const [username, setUsername] = useState("");
+	const [password, setPassword] = useState("");
+
+	const login = async () => {
+		axios
+			.post("/user/login", {
+				username: username,
+				password: password,
+			})
+			.then((response) => {
+				if (response.data.token) {
+					toast.success("Logged In!", {
+						className: "f1 shadow-outline",
+					});
+					toast(`Welcome ${username}!`, {
+						position: "bottom-right",
+						icon: response.data.emoji,
+						className: "f1 shadow-outline",
+					});
+					window.localStorage.setItem("token", response.data.token);
+					window.localStorage.setItem("userID", response.data.userID);
+					setTimeout(() => {
+						navigate("/");
+						window.location.reload();
+					}, 1000);
+				} else {
+					console.log(response.data.message);
+					toast(response.data.message, {
+						position: "bottom-right",
+						icon: response.data.emoji,
+						className: "shadow-outline text-black f1",
+					});
+				}
+			})
+			.catch((err) => {
+				console.log(err);
+				toast.error("Error logging in user", {
+					position: "bottom-right",
+					className: "shadow-outline text-black f1",
+				});
+			});
+	};
+
+	const handleSubmit = (e) => {
+		e.preventDefault();
+	};
+
 	return (
 		<>
 			<div className="f1 flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
@@ -19,7 +79,7 @@ const Login = () => {
 				</div>
 
 				<div className="mt-7 sm:mx-auto sm:w-full sm:max-w-sm">
-					<form className="space-y-6" action="#" method="POST">
+					<form className="space-y-6" action="#" onSubmit={handleSubmit}>
 						<div>
 							<label
 								htmlFor="username"
@@ -34,6 +94,9 @@ const Login = () => {
 									type="text"
 									autoComplete="username"
 									required
+									placeholder="iamshubhsinha"
+									value={username}
+									onChange={(e) => setUsername(e.target.value)}
 									className="block w-full rounded-md border-0 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#8800ff] sm:text-sm sm:leading-6"
 								/>
 							</div>
@@ -63,6 +126,9 @@ const Login = () => {
 									type={passwordFlag}
 									autoComplete="current-password"
 									required
+									placeholder="********"
+									value={password}
+									onChange={(e) => setPassword(e.target.value)}
 									className="block w-full rounded-md border-0 py-1 pr-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#8800ff] sm:text-sm sm:leading-6"
 								/>
 								<button
@@ -82,6 +148,9 @@ const Login = () => {
 						<div>
 							<button
 								type="submit"
+								onClick={() => {
+									login();
+								}}
 								className="flex w-full justify-center rounded-md bg-[#a200ff] px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-[#9900ff] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
 							>
 								Sign in
