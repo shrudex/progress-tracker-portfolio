@@ -64,6 +64,40 @@ const Login = () => {
 		e.preventDefault();
 	};
 
+	const forgotPassword = async () => {
+		console.log("gpaa");
+		if (!username) {
+			toast.error("Please enter your username!", {
+				position: "bottom-right",
+				className: "shadow-outline text-black f1",
+			});
+			return;
+		}
+		axios
+			.post("/user/forgotPassword", { username })
+			.then((response) => {
+				if (response.data.color === "green") {
+					toast(response.data.message, {
+						position: "bottom-right",
+						icon: "📧",
+						className: "shadow-outline text-black f1",
+					});
+				} else {
+					toast(response.data.message, {
+						position: "bottom-right",
+						className: "shadow-outline text-black f1",
+					});
+				}
+			})
+			.catch((err) => {
+				toast.error("Error logging in user", {
+					position: "bottom-right",
+					className: "shadow-outline text-black f1",
+				});
+				console.log(err);
+			});
+	};
+
 	return (
 		<>
 			<div className="f1 flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
@@ -112,8 +146,11 @@ const Login = () => {
 								</label>
 								<div className="text-sm">
 									<a
-										href="#"
-										className="font-semibold text-[#a200ff] hover:text-[#8800ff]"
+										onClick={(e) => {
+											e.preventDefault();
+											forgotPassword();
+										}}
+										className="cursor-pointer font-semibold text-[#a200ff] hover:text-[#8800ff]"
 									>
 										Forgot password?
 									</a>

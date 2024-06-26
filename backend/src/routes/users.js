@@ -1,6 +1,9 @@
 import express from "express";
 import jsonwebtoken from "jsonwebtoken";
 import bcrypt from "bcryptjs";
+import dotenv from "dotenv";
+dotenv.config();
+import { sendEmail } from "../utils/mailer.js";
 
 import { User } from "../models/Users.js";
 
@@ -59,7 +62,6 @@ function isValidName(name) {
 
 router.post("/register", async (req, res) => {
 	const { username, name, email, password } = req.body;
-	console.log(req.body);
 
 	if (!isValidUsername(username)) {
 		return res.json({
@@ -107,6 +109,49 @@ router.post("/register", async (req, res) => {
 	});
 	await newUser.save();
 	const token = jsonwebtoken.sign({ id: newUser._id }, "secret");
+
+	sendEmail(
+		email,
+		`Hi ${username}! Kudos on registering!🎉`,
+		`
+		<html>
+		<head>
+			<style>
+				body {
+					font-family: Arial, sans-serif;
+					background-color: #f2f2f2;
+					padding: 20px;
+				}
+				h1 {
+					color: #333333;
+				}
+				p {
+					font-size: 16px;
+					line-height: 1.6;
+					color: #666666;
+				}
+				strong {
+					color: #007bff;
+				}
+				.email-container {
+					background-color: #ffffff;
+					padding: 20px;
+					border-radius: 8px;
+					box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+				}
+			</style>
+		</head>
+		<body>
+			<div class="email-container">
+				<h1>A Big W on Registering for the Progress Tracker App, ${name}!</h1>
+				<p>Thank you for registering. Your username is <strong>${username}</strong>.</p>
+				<p>Best regards,<br>Shubh Sinha</p>
+			</div>
+		</body>
+		</html>
+		`
+	);
+
 	res.json({
 		message: "✅ User registered successfully!",
 		color: "green",
@@ -117,13 +162,11 @@ router.post("/register", async (req, res) => {
 
 router.post("/login", async (req, res) => {
 	const { username, password } = req.body;
-	console.log(req.body);
 	const user = await User.findOne({ username: username });
 	if (!user) {
 		return res.json({ message: "👤 User does not exist!" });
 	}
 	const valid = await bcrypt.compare(password, user.password);
-	console.log(user);
 	if (!valid) {
 		return res.json({ message: "⚠️ Invalid credentials!" });
 	}
@@ -136,5 +179,81 @@ router.post("/login", async (req, res) => {
 //	const user = await User.findById(userID);
 //	res.json(user);
 //});
+
+const generateTemporaryPassword = () => {
+	const temporaryPassword = Math.random().toString(36).slice(-8);
+	return temporaryPassword;
+};
+
+router.post("/forgotPassword", async (req, res) => {
+	const { username } = req.body;
+	const user = await User.findOne({ username });
+	if (!user) {
+		return res.json({
+			message: "⚠️ No account found with that username!",
+			color: "red",
+		});
+	}
+	const temporaryPassword = generateTemporaryPassword();
+
+	const hashedTemporaryPassword = await bcrypt.hash(temporaryPassword, 10);
+
+	user.password = hashedTemporaryPassword;
+	await user.save();
+
+	sendEmail(
+		user.email,
+		`Password Recovery for ${user.name}`,
+		`
+		<html>
+		<head>
+			<style>
+				body {
+					font-family: Arial, sans-serif;
+					background-color: #f2f2f2;
+					padding: 20px;
+				}
+				h1 {
+					color: #333333;
+				}
+				p {
+					font-size: 16px;
+					line-height: 1.6;
+					color: #666666;
+				}
+				strong {
+					color: #007bff;
+				}
+				em {
+					font-style: italic;
+				}
+				.email-container {
+					background-color: #ffffff;
+					padding: 20px;
+					border-radius: 8px;
+					box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+				}
+			</style>
+		</head>
+		<body>
+			<div class="email-container">
+				<h1>Password Recovery</h1>
+				<p>Hi <em>${user.name}</em>,</p>
+				<p>We received a request to recover your password. Your temporary password is:</p>
+				<p><strong>${temporaryPassword}</strong></p>
+				<p>Best regards,<br>Shubh Sinha</p>
+			</div>
+		</body>
+		</html>
+		`
+	);
+
+	const maskedEmail = user.email.replace(/(?<=.{3}).(?=[^@]*?@)/g, "*");
+
+	res.json({
+		message: `Temporary password sent to ${maskedEmail}!`,
+		color: "green",
+	});
+});
 
 export { router as usersRouter };
