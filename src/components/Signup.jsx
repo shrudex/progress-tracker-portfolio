@@ -4,7 +4,6 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import axios from "../axios";
-import { getToken } from "../hooks/getToken";
 import { useEffect } from "react";
 const Signup = () => {
 	const [passwordFlag, setPasswordFlag] = useState("password");
@@ -14,13 +13,6 @@ const Signup = () => {
 	const [email, setEmail] = useState("");
 
 	const navigate = useNavigate();
-
-	useEffect(() => {
-		const token = getToken();
-		if (token) {
-			navigate("/");
-		}
-	});
 
 	const register = async () => {
 		axios

@@ -65,7 +65,6 @@ const Login = () => {
 	};
 
 	const forgotPassword = async () => {
-		console.log("gpaa");
 		if (!username) {
 			toast.error("Please enter your username!", {
 				position: "bottom-right",

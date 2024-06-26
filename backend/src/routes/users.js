@@ -174,11 +174,56 @@ router.post("/login", async (req, res) => {
 	res.json({ token, userID: user._id });
 });
 
-//router.post("/getUser", async (req, res) => {
-//	const { userID } = req.body;
-//	const user = await User.findById(userID);
-//	res.json(user);
-//});
+router.get("/:userID", async (req, res) => {
+	try {
+		const user = await User.findById(req.params.userID);
+		if (!user) {
+			return res.json({
+				message: "👤 User not found!",
+				color: "red",
+			});
+		}
+		console.log(user);
+		res.json({
+			username: user.username,
+			name: user.name,
+			email: user.email,
+			pfpIcon: user.pfpIcon,
+			firstName: user.firstName,
+			lastName: user.lastName,
+			about: user.about,
+			createdAt: user.createdAt,
+		});
+	} catch (error) {
+		res.json({
+			message: "Error fetching user!",
+			color: "red",
+		});
+	}
+});
+
+router.put("/:userID", async (req, res) => {
+	try {
+		const user = await User.findByIdAndUpdate(req.params.userID, req.body, {
+			new: true,
+		});
+		if (!user) {
+			return res.json({
+				message: "👤 User not found!",
+				color: "red",
+			});
+		}
+		res.json({
+			message: "✅ User updated successfully!",
+			color: "green",
+		});
+	} catch (error) {
+		res.json({
+			message: "Error updating user!",
+			color: "red",
+		});
+	}
+});
 
 const generateTemporaryPassword = () => {
 	const temporaryPassword = Math.random().toString(36).slice(-8);
@@ -248,7 +293,26 @@ router.post("/forgotPassword", async (req, res) => {
 		`
 	);
 
-	const maskedEmail = user.email.replace(/(?<=.{3}).(?=[^@]*?@)/g, "*");
+	function maskEmail(email) {
+		const atIndex = email.indexOf("@");
+		const domain = email.slice(atIndex);
+		const name = email.slice(0, atIndex);
+
+		let maskedName;
+		if (name.length <= 4) {
+			maskedName = name[0] + "*".repeat(name.length - 1);
+		} else {
+			const firstPart = name.slice(0, 3);
+			const middlePart1 = name.slice(3, 7).replace(/./g, "*");
+			const middlePart2 = name.slice(7, 13);
+			const lastPart = name.slice(13).replace(/./g, "*");
+			maskedName = firstPart + middlePart1 + middlePart2 + lastPart;
+		}
+
+		return maskedName + domain;
+	}
+
+	const maskedEmail = maskEmail(user.email);
 
 	res.json({
 		message: `Temporary password sent to ${maskedEmail}!`,
