@@ -6,6 +6,10 @@ const skillSchema = new mongoose.Schema({
 		required: true,
 		unique: true,
 	},
+	description: {
+		type: String,
+		required: false,
+	},
 });
 
 export const Skill = mongoose.model("Skill", skillSchema);

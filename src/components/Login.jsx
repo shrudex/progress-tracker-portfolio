@@ -79,7 +79,7 @@ const Login = () => {
 				</div>
 
 				<div className="mt-7 sm:mx-auto sm:w-full sm:max-w-sm">
-					<form className="space-y-6" action="#" onSubmit={handleSubmit}>
+					<form className="space-y-6" onSubmit={handleSubmit}>
 						<div>
 							<label
 								htmlFor="username"

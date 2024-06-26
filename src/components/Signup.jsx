@@ -47,12 +47,19 @@ const Signup = () => {
 						window.location.reload();
 					}, 1000);
 				} else {
-					console.log(response.data.message);
-					toast(response.data.message, {
-						position: "bottom-right",
-						icon: response.data.emoji,
-						className: "shadow-outline text-black f1",
-					});
+					console.log(response.data);
+					if (response.data.smallFont === true) {
+						toast(response.data.message, {
+							position: "bottom-right",
+							className: "shadow-outline text-black f1 text-sm",
+						});
+					} else {
+						toast(response.data.message, {
+							position: "bottom-right",
+							icon: response.data.emoji,
+							className: "shadow-outline text-black f1",
+						});
+					}
 				}
 			})
 			.catch((err) => {
@@ -82,7 +89,7 @@ const Signup = () => {
 				</div>
 
 				<div className="mt-3 sm:mx-auto sm:w-full sm:max-w-sm">
-					<form className="space-y-4" action="#" method="POST">
+					<form className="space-y-4" onSubmit={handleSubmit}>
 						<div>
 							<label
 								htmlFor="name"
@@ -96,6 +103,9 @@ const Signup = () => {
 									name="name"
 									type="text"
 									required
+									placeholder="Shubh Sinha"
+									value={name}
+									onChange={(e) => setName(e.target.value)}
 									className="block w-full rounded-md border-0 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#8800ff] sm:text-sm sm:leading-6"
 								/>
 							</div>
@@ -114,6 +124,9 @@ const Signup = () => {
 									type="email"
 									autoComplete="email"
 									required
+									placeholder="xyz@gmail.com"
+									value={email}
+									onChange={(e) => setEmail(e.target.value)}
 									className="block w-full rounded-md border-0 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#8800ff] sm:text-sm sm:leading-6"
 								/>
 							</div>
@@ -132,6 +145,9 @@ const Signup = () => {
 									type="text"
 									autoComplete="username"
 									required
+									placeholder="iamshubhsinha"
+									value={username}
+									onChange={(e) => setUsername(e.target.value)}
 									className="block w-full rounded-md border-0 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#8800ff] sm:text-sm sm:leading-6"
 								/>
 							</div>
@@ -153,6 +169,9 @@ const Signup = () => {
 									type={passwordFlag}
 									autoComplete="current-password"
 									required
+									placeholder="********"
+									value={password}
+									onChange={(e) => setPassword(e.target.value)}
 									className="block w-full rounded-md border-0 py-1 pr-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#8800ff] sm:text-sm sm:leading-6"
 								/>
 								<button
@@ -172,6 +191,9 @@ const Signup = () => {
 						<div>
 							<button
 								type="submit"
+								onClick={() => {
+									register();
+								}}
 								className="flex w-full justify-center rounded-md bg-[#a200ff] px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-[#9900ff] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
 							>
 								Sign up
