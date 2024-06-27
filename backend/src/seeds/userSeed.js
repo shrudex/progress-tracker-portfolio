@@ -6,7 +6,6 @@ import process from "process";
 dotenv.config({ path: "../../.env" });
 
 const URL = process.env.MONGODB_URI;
-console.log(URL);
 
 const seedUsers = async () => {
 	try {
