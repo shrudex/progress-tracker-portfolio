@@ -3,6 +3,7 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import mongoose from "mongoose";
 import { usersRouter } from "./routes/users.js";
+import { skillsRouter } from "./routes/skills.js";
 import { User } from "./models/Users.js";
 import process from "process";
 import dotenv from "dotenv";
@@ -13,6 +14,8 @@ app.use(cors());
 app.use(bodyParser.json());
 
 app.use("/user", usersRouter);
+app.use("/skill", skillsRouter);
+
 const URL = process.env.MONGODB_URI;
 mongoose
 	.connect(URL, {})
