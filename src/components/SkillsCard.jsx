@@ -2,18 +2,19 @@ import React from "react";
 
 const SkillsCard = ({ skill }) => {
 	return (
-		<div className="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-			<h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-				{skill.skillName}
+		<div className="w-full hover:shadow-xl transition-all pl-5 pr-3 py-3 bg-white border border-gray-200 rounded-lg shadow ">
+			<h5 className="f1 mb-2 text-2xl font-bold tracking-tight text-gray-900 ">
+				{skill.skillId.skillName}
 			</h5>
-			<p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
-				{skill.description}
+			<p className="f2 mb font-medium text-purple-700 ">
+				{skill.skillId.description}
 			</p>
-			<p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
-				Proficiency Level: {skill.proficiencyLevel}
+			<p className="f2 mb-1 font-normal text-gray-700 ">
+				{"⭐".repeat(skill.proficiencyLevel)}
 			</p>
-			<p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
-				Added on: {new Date(skill.createdAt).toLocaleDateString()}
+
+			<p className="f2 font-normal text-gray-700 ">
+				<span className="font-bold">Added on:</span> {new Date(skill.createdAt).toLocaleDateString()}
 			</p>
 		</div>
 	);
