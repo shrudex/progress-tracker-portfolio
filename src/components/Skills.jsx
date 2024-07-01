@@ -2,6 +2,8 @@ import React from "react";
 import { useState, useEffect } from "react";
 import axios from "../axios";
 import SkillsCard from "./SkillsCard";
+import { BeatLoader } from "react-spinners";
+
 import {
 	Dialog,
 	DialogBackdrop,
@@ -13,12 +15,13 @@ import toast from "react-hot-toast";
 
 const Skills = () => {
 	const [buttonIcon, setButtonIcon] = useState("➕");
+	const [loading, setLoading] = useState(true);
+
 	const userID = localStorage.getItem("userID");
 
 	// for fetching skills info
 	const [skills, setSkills] = useState([]);
 	const [userSkills, setUserSkills] = useState([]);
-	const [combinedSkills, setCombinedSkills] = useState([]);
 
 	// for modals
 	const [open, setOpen] = useState(false);
@@ -43,7 +46,7 @@ const Skills = () => {
 			try {
 				const response = await axios.get(`/skill/user-skills/${userID}`);
 				setUserSkills(response.data.userSkills);
-				console.log("User skills", response.data.userSkills);
+				setLoading(false);
 			} catch (error) {
 				console.error("Error fetching user skills:", error);
 			}
@@ -85,11 +88,24 @@ const Skills = () => {
 		}
 	};
 
+	if (loading) {
+		return (
+			<div className="flex justify-center items-center mt-52">
+				<BeatLoader color={"#a200ff"} loading={loading} size={12} />
+			</div>
+		);
+	}
+
 	return (
 		<div className="w-full px-6 py-4">
 			<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
 				{userSkills.map((skill, index) => (
-					<SkillsCard key={index} skill={skill} />
+					<SkillsCard
+						key={index}
+						skill={skill}
+						skillAdded={skillAdded}
+						setSkillAdded={setSkillAdded}
+					/>
 				))}
 			</div>
 
@@ -123,7 +139,6 @@ const Skills = () => {
 								<form onSubmit={handleSubmit}>
 									<div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
 										<div className="sm:flex sm:items-start">
-											
 											<div className="mt-3 text-center w-full sm:ml-4 sm:mt-0 sm:text-left">
 												<DialogTitle
 													as="h3"
@@ -150,7 +165,11 @@ const Skills = () => {
 															Select a skill
 														</option>
 														{skills.map((skill) => (
-															<option className="f1" key={skill._id} value={skill.skillName}>
+															<option
+																className="f1"
+																key={skill._id}
+																value={skill.skillName}
+															>
 																{skill.skillName}
 															</option>
 														))}

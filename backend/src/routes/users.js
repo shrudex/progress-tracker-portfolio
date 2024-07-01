@@ -183,7 +183,6 @@ router.get("/:userID", async (req, res) => {
 				color: "red",
 			});
 		}
-		console.log(user);
 		res.json({
 			username: user.username,
 			name: user.name,

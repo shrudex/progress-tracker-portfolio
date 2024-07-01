@@ -30,14 +30,14 @@ router.post("/user-skill", async (req, res) => {
 			return res.json({ message: "Skill not found", color: "red" });
 		}
 
-		const userSkill = await UserSkill
-			.findOne({ userId, skillId: skill._id })
-			.populate("skillId");
-		
+		const userSkill = await UserSkill.findOne({
+			userId,
+			skillId: skill._id,
+		}).populate("skillId");
+
 		if (userSkill) {
 			return res.json({ message: "Skill already added", color: "red" });
 		}
-
 
 		const newUserSkill = new UserSkill({
 			userId,
@@ -62,7 +62,6 @@ router.get("/user-skills/:userId", async (req, res) => {
 	const { userId } = req.params;
 	try {
 		const userSkills = await UserSkill.find({ userId }).populate("skillId");
-		console.log("sending...", userSkills)
 		res.json({ userSkills, message: "User skills fetched", color: "green" });
 	} catch (error) {
 		res.json({
@@ -70,6 +69,27 @@ router.get("/user-skills/:userId", async (req, res) => {
 			color: "red",
 			error: error,
 		});
+	}
+});
+
+router.delete("/user-skill", async (req, res) => {
+	try {
+		const { userId, skillId } = req.body;
+
+		const userSkill = await UserSkill.findOneAndDelete({ userId, skillId });
+
+		if (!userSkill) {
+			return res
+				.status(404)
+				.json({ message: "User skill not found", color: "red" });
+		}
+
+		res.json({ message: "User skill deleted", color: "green" });
+	} catch (error) {
+		console.error("Error deleting user skill:", error);
+		res
+			.status(500)
+			.json({ message: "Error deleting user skill", color: "red", error });
 	}
 });
 
