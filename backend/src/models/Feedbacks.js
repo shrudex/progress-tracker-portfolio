@@ -1,14 +1,27 @@
 import mongoose from "mongoose";
 
 const feedbackSchema = new mongoose.Schema({
-	userId: {
+	userID: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: "User",
+	},
+	skill: {
+		type: String,
 		required: true,
 	},
-	rating: {
+	overallRating: {
 		type: Number,
 		required: true,
+		min: 1,
+		max: 5,
+	},
+	usabilityRating: {
+		type: Number,
+		min: 1,
+		max: 5,
+	},
+	supportRating: {
+		type: Number,
 		min: 1,
 		max: 5,
 	},
@@ -16,7 +29,14 @@ const feedbackSchema = new mongoose.Schema({
 		type: String,
 		required: true,
 	},
-	createdAt: {
+	tags: {
+		type: String,
+	},
+	anonymous: {
+		type: Boolean,
+		default: false,
+	},
+	created_at: {
 		type: Date,
 		default: Date.now,
 	},

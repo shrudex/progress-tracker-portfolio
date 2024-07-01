@@ -61,7 +61,7 @@ const SkillsCard = ({ skill, skillAdded, setSkillAdded }) => {
 			<div className="flex justify-between">
 				<p className="f2 font-normal text-gray-700 ">
 					<span className="font-bold">Added on:</span>{" "}
-					{new Date(skill.createdAt).toLocaleDateString()}
+					{new Date(skill.createdAt).toLocaleDateString("en-GB")}
 				</p>
 				<button onClick={(e) => deleteSkillFunction(e)} className="text-xl">
 					🚮

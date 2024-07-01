@@ -4,6 +4,7 @@ import cors from "cors";
 import mongoose from "mongoose";
 import { usersRouter } from "./routes/users.js";
 import { skillsRouter } from "./routes/skills.js";
+import { feedbackRouter } from "./routes/feedback.js";
 import { User } from "./models/Users.js";
 import process from "process";
 import dotenv from "dotenv";
@@ -15,6 +16,7 @@ app.use(bodyParser.json());
 
 app.use("/user", usersRouter);
 app.use("/skill", skillsRouter);
+app.use("/feedback", feedbackRouter);
 
 const URL = process.env.MONGODB_URI;
 mongoose
