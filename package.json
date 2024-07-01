@@ -18,11 +18,14 @@
     "nodemailer": "^6.9.14",
     "prettier": "^3.3.2",
     "react": "^18.3.1",
+    "react-datepicker": "^7.2.0",
+    "react-datetime": "^3.2.0",
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.52.0",
     "react-hot-toast": "^2.4.1",
     "react-router-dom": "^6.23.1",
-    "react-spinners": "^0.14.0"
+    "react-spinners": "^0.14.0",
+    "tailwind-scrollbar-hide": "^1.1.7"
   },
   "devDependencies": {
     "@types/react": "^18.3.3",

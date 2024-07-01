@@ -1,5 +1,5 @@
 import { Routes, Route } from "react-router-dom";
-
+import { useState } from "react";
 import Login from "./components/Login";
 import Navbar from "./components/Navbar";
 import Signup from "./components/Signup";
@@ -12,12 +12,18 @@ import Skills from "./components/Skills";
 
 import { Toaster } from "react-hot-toast";
 function App() {
+	const [renderTodos, setRenderTodos] = useState(false);
 	return (
-		<>
+		<div className="min-h-screen">
 			<Toaster />
-			<Navbar />
+			<Navbar renderTodos={renderTodos} setRenderTodos={setRenderTodos} />
 			<Routes>
-				<Route path="/" element={<Home />} />
+				<Route
+					path="/"
+					element={
+						<Home renderTodos={renderTodos} setRenderTodos={setRenderTodos} />
+					}
+				/>
 				<Route path="/login" element={<Login />} />
 				<Route path="/signup" element={<Signup />} />
 				<Route path="/about" element={<About />} />
@@ -26,7 +32,7 @@ function App() {
 				<Route path="/progress" element={<Progress />} />
 				<Route path="/skills" element={<Skills />} />
 			</Routes>
-		</>
+		</div>
 	);
 }
 

@@ -12,6 +12,8 @@ import { useNavigate, useLocation, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "../axios";
 import { toast } from "react-hot-toast";
+import AddTodoModal from "./AddTodoModal";
+
 
 const navigation = [
 	{ name: "Home", href: "/", current: true },
@@ -25,12 +27,13 @@ function classNames(...classes) {
 	return classes.filter(Boolean).join(" ");
 }
 
-export default function Navbar() {
+export default function Navbar({ renderTodos, setRenderTodos }) {
 	const navigate = useNavigate();
 	const location = useLocation();
 	const [userData, setUserData] = useState({});
 
 	const [showNav, setShowNav] = useState(true);
+	const [isModalOpen, setIsModalOpen] = useState(false);
 
 	useEffect(() => {
 		const token = localStorage.getItem("token");
@@ -52,6 +55,14 @@ export default function Navbar() {
 				console.error("There was an error fetching the user data!", error);
 			});
 	}, [userID]);
+
+	const handleOpenModal = () => {
+		setIsModalOpen(true);
+	};
+
+	const handleCloseModal = () => {
+		setIsModalOpen(false);
+	};
 
 	return (
 		<>
@@ -152,21 +163,20 @@ export default function Navbar() {
 													)}
 												</MenuItem>
 
-												{/* Future Settings Button 
-										<MenuItem>
-											{({ focus }) => (
-												<a
-													href="#"
-													className={classNames(
-														focus ? "bg-gray-100" : "",
-														"block px-4 py-2 text-sm text-gray-700"
+												<MenuItem>
+													{({ focus }) => (
+														<a
+															onClick={handleOpenModal}
+															className={classNames(
+																focus ? "bg-gray-100" : "",
+																"block px-4 py-2 text-sm text-gray-700"
+															)}
+														>
+															Add Todo
+														</a>
 													)}
-												>
-													Settings
-												</a>
-											)}
-										</MenuItem>
-                    */}
+												</MenuItem>
+
 												<MenuItem>
 													{({ focus }) => (
 														<a
@@ -215,6 +225,13 @@ export default function Navbar() {
 					)}
 				</Disclosure>
 			)}
+			<AddTodoModal
+				renderTodos={renderTodos}
+				setRenderTodos={setRenderTodos}
+				isOpen={isModalOpen}
+				onClose={handleCloseModal}
+				className="w-full h-full"
+			/>
 		</>
 	);
 }
