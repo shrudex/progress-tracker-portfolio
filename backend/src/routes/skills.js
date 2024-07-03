@@ -62,6 +62,7 @@ router.get("/user-skills/:userId", async (req, res) => {
 	const { userId } = req.params;
 	try {
 		const userSkills = await UserSkill.find({ userId }).populate("skillId");
+
 		res.json({ userSkills, message: "User skills fetched", color: "green" });
 	} catch (error) {
 		res.json({

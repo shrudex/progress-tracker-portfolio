@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import axios from "../axios";
+import { BeatLoader } from "react-spinners";
 
-const About = () => {
-	const username = localStorage.getItem("username");
+const UserProfile = () => {
+	const { username } = useParams();
 	const [userData, setUserData] = useState({
 		username: "",
 		name: "",
@@ -17,7 +18,7 @@ const About = () => {
 	});
 	const [userID, setUserID] = useState("");
 	const [userSkills, setUserSkills] = useState([]);
-	const [isLoading, setIsLoading] = useState(true);
+	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
 		const fetchUserData = async () => {
@@ -26,10 +27,12 @@ const About = () => {
 				setUserData(response.data);
 				setUserID(response.data._id);
 				console.log("User data:", response.data);
-				setIsLoading(false);
+				setTimeout(() => {
+					setLoading(false);
+				}, 3000);
 			} catch (error) {
 				toast.error("Error fetching user data");
-				setIsLoading(false);
+				setLoading(false);
 			}
 		};
 
@@ -48,8 +51,13 @@ const About = () => {
 		if (!userID) return;
 		fetchUserSkills();
 	}, [userID]);
-	if (isLoading) {
-		return <div>Loading...</div>;
+
+	if (loading) {
+		return (
+			<div className="flex justify-center items-center mt-52">
+				<BeatLoader color={"#a200ff"} loading={loading} size={12} />
+			</div>
+		);
 	}
 
 	return (
@@ -59,7 +67,10 @@ const About = () => {
 					<div className="mx-auto max-w-2xl lg:text-center">
 						<img
 							className="w-fit h-20 mx-auto rounded-full shadow-2xl mb-3"
-							src={userData.pfpIcon || "https://avatar.iran.liara.run/public/boy?username=Ash"}
+							src={
+								userData.pfpIcon ||
+								"https://avatar.iran.liara.run/public/boy?username=Ash"
+							}
 							alt="User profile"
 						/>
 						<h2 className="f2 italic text-base font-semibold leading-7 text-purple-600">
@@ -75,7 +86,6 @@ const About = () => {
 				</div>
 				<hr className="w-2/4 h-0.5 mx-auto my-4 bg-gray-300 border-0 rounded md:my-6" />
 				<div className="w-full px-12">
-					
 					<div className="relative overflow-x-auto shadow-md sm:rounded-lg">
 						<table className="w-full text-sm text-left rtl:text-right text-gray-500">
 							{" "}
@@ -130,4 +140,4 @@ const About = () => {
 	);
 };
 
-export default About;
+export default UserProfile;

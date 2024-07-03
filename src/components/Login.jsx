@@ -38,6 +38,7 @@ const Login = () => {
 					});
 					window.localStorage.setItem("token", response.data.token);
 					window.localStorage.setItem("userID", response.data.userID);
+					window.localStorage.setItem("username", response.data.username);
 					setTimeout(() => {
 						navigate("/");
 						window.location.reload();

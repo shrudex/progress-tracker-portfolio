@@ -26,7 +26,8 @@ const TaskList = ({ tasks, onDeleteTask }) => {
 					</div>
 				))
 			) : (
-				<p className="f1 text-lg text-center text-gray-700">No tasks found.</p>
+					<p className="f1 text-lg text-center text-gray-700">
+						{tasks.length} tasks found.</p>
 			)}
 		</div>
 	);

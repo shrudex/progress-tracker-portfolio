@@ -8,10 +8,12 @@ import {
 import axios from "../axios";
 import Datetime from "react-datetime";
 import "react-datetime/css/react-datetime.css";
+import { useNavigate } from "react-router-dom";
 
 const AddTodoModal = ({ isOpen, onClose, renderTodos, setRenderTodos }) => {
 	const [task, setTask] = useState("");
 	const [dueDate, setDueDate] = useState("");
+	const navigate = useNavigate();
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
@@ -30,6 +32,22 @@ const AddTodoModal = ({ isOpen, onClose, renderTodos, setRenderTodos }) => {
 				userId: localStorage.getItem("userID"),
 			});
 			setTask([...task, response.data]);
+			setRenderTodos(!renderTodos);
+			const fetchTasks = async () => {
+				try {
+					const response = await axios.get(
+						`/todos/${localStorage.getItem("userID")}`
+					);
+					if (response.data.length === 1) {
+						//refresh the page
+						window.location.reload();
+					}
+				} catch (error) {
+					console.error("Error fetching tasks:", error);
+				}
+			};
+
+			fetchTasks();
 			setTask("");
 			setDueDate("");
 		} catch (error) {

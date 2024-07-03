@@ -30,7 +30,7 @@ const Home = ({ renderTodos, setRenderTodos }) => {
 		};
 
 		fetchTasks();
-	}, [renderTodos]);
+	}, [renderTodos, userId]);
 
 	const handleDeleteTask = async (taskId) => {
 		try {

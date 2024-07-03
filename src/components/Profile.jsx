@@ -33,6 +33,7 @@ const Profile = () => {
 				console.error("There was an error fetching the user data!", error);
 			});
 	}, [userID]);
+	
 
 	const handleChange = (e) => {
 		const { name, value } = e.target;

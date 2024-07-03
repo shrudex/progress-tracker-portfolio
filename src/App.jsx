@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import { useState } from "react";
 import Login from "./components/Login";
 import Navbar from "./components/Navbar";
@@ -9,14 +9,24 @@ import Feedback from "./components/Feedback";
 import Profile from "./components/Profile";
 import Progress from "./components/Progress";
 import Skills from "./components/Skills";
+import UserProfile from "./components/UserProfile";
 
 import { Toaster } from "react-hot-toast";
 function App() {
 	const [renderTodos, setRenderTodos] = useState(false);
+	const location = useLocation();
+
+	const hideNavbarPaths = ["/u"];
+	const shouldHideNavbar = hideNavbarPaths.some((path) =>
+		location.pathname.startsWith(path)
+	);
+
 	return (
 		<div className="min-h-screen">
 			<Toaster />
-			<Navbar renderTodos={renderTodos} setRenderTodos={setRenderTodos} />
+			{!shouldHideNavbar && (
+				<Navbar renderTodos={renderTodos} setRenderTodos={setRenderTodos} />
+			)}
 			<Routes>
 				<Route
 					path="/"
@@ -31,6 +41,7 @@ function App() {
 				<Route path="/profile" element={<Profile />} />
 				<Route path="/progress" element={<Progress />} />
 				<Route path="/skills" element={<Skills />} />
+				<Route path="/u/:username" element={<UserProfile />} />
 			</Routes>
 		</div>
 	);

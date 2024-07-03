@@ -157,6 +157,7 @@ router.post("/register", async (req, res) => {
 		color: "green",
 		token: token,
 		userID: newUser._id,
+		username: newUser.username,
 	});
 });
 
@@ -171,7 +172,7 @@ router.post("/login", async (req, res) => {
 		return res.json({ message: "⚠️ Invalid credentials!" });
 	}
 	const token = jsonwebtoken.sign({ id: user._id }, "secret");
-	res.json({ token, userID: user._id });
+	res.json({ token, userID: user._id, username: user.username });
 });
 
 router.get("/:userID", async (req, res) => {
@@ -224,10 +225,29 @@ router.put("/:userID", async (req, res) => {
 	}
 });
 
+
+
 const generateTemporaryPassword = () => {
 	const temporaryPassword = Math.random().toString(36).slice(-8);
 	return temporaryPassword;
 };
+
+router.get("/u/:username", async (req, res) => {
+	try {
+		const username = req.params.username;
+		const user = await User.findOne({ username });
+
+		if (!user) {
+			return res.status(404).json({ message: "User not found" });
+		}
+
+		const { password, ...userDetails } = user._doc;
+		res.json(userDetails);
+	} catch (error) {
+		console.error("Error fetching user details:", error);
+		res.status(500).json({ message: "Internal server error" });
+	}
+});
 
 router.post("/forgotPassword", async (req, res) => {
 	const { username } = req.body;
@@ -318,5 +338,6 @@ router.post("/forgotPassword", async (req, res) => {
 		color: "green",
 	});
 });
+
 
 export { router as usersRouter };
